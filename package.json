@@ -1,0 +1,21 @@
+{
+  "name": "redux-notes-app",
+  "version": "1.0.0",
+  "description": "redux tutorial",
+  "main": "index.js",
+  "author": "Jessica Anderson",
+  "license": "MIT",
+  "dependencies": {
+    "redux": "^4.0.4"
+  },
+  "scripts": {
+    "dev": "webpack --watch --mode=development"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "babel-loader": "^8.0.6",
+    "webpack": "^4.39.3",
+    "webpack-cli": "^3.3.7"
+  }
+}
