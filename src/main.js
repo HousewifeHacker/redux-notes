@@ -1,15 +1,5 @@
-data = {
-    notes: [
-        {
-            title: 'Note 1 Title',
-            content: 'Note 1 Content'
-        },
-        {
-            title: 'Note 2 Title',
-            content: 'Note 2 Content'
-        },
-    ]
-}
+import store from './store/store';
+import { addNote, removeNote } from './actions/notes';
 
 //  HTML references
 let notesList = document.getElementById('notes');
@@ -20,12 +10,13 @@ let deleteSelector = 'ul#notes li button';
 
 // Handle Changes
 function deleteNote(index) {
-    console.log(index);
+    store.dispatch(removeNote(index));
 }
 
-function renderNotes(data) {
+function renderNotes() {
     notesList.innerHTML = '';
-    notes = data.notes;
+    let data = store.getState();
+    let notes = data.notes;
     notes.map((note, index) => {
         let noteElem = `
             <li>
@@ -41,6 +32,17 @@ function renderNotes(data) {
 }
 
 // EventListeners
+addNoteForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    let title = newNoteTitle.value;
+    let content = newNoteContent.value;
+    store.dispatch(addNote(title, content));
+
+    newNoteTitle.value = '';
+    newNoteContent.value = '';
+}); 
+
 function setDeleteListeners() {
     let buttons = document.querySelectorAll(deleteSelector);
 
@@ -49,7 +51,10 @@ function setDeleteListeners() {
             deleteNote(button.getAttribute('data-index'));
         });
     }
-}
+} 
 
 // do it
-renderNotes(data);
+renderNotes();
+store.subscribe(() => {
+    renderNotes();
+});
