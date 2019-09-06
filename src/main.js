@@ -1,5 +1,6 @@
 import store from './store/store';
 import { addNote, removeNote } from './actions/notes';
+import { VISIBILITY_FILTERS, setVisibility, SHOW_VALID } from './actions/visibility';
 
 //  HTML references
 let notesList = document.getElementById('notes');
@@ -7,16 +8,40 @@ let addNoteForm = document.getElementById('add-note');
 let newNoteTitle = addNoteForm['title'];
 let newNoteContent = addNoteForm['content'];
 let deleteSelector = 'ul#notes li button';
+let filterContainer = document.getElementById('filter-container');
 
 // Handle Changes
 function deleteNote(index) {
     store.dispatch(removeNote(index));
 }
 
+function getVisibleNotes(notes, visibility=SHOW_VALID) {
+    switch (visibility) {
+        case VISIBILITY_FILTERS.SHOW_ALL:
+            return notes
+        case VISIBILITY_FILTERS.SHOW_VALID:
+            return notes.filter(note => note.valid)
+        case VISIBILITY_FILTERS.SHOW_DONE:
+            return notes.filter( note => !note.valid)
+        default:
+            throw new Error(`Visibility error: ${visibility}`)
+    }
+}
+
 function renderNotes() {
-    notesList.innerHTML = '';
     let data = store.getState();
-    let notes = data.notes;
+    console.log(data);
+
+    // dumb to be in here now, but it's going to move with React anyways
+    filterContainer.innerHTML = `
+        <button data-filter="${VISIBILITY_FILTERS.SHOW_VALID}">Valid</button>
+        <button data-filter="${VISIBILITY_FILTERS.SHOW_ALL}">All</button>
+        <button data-filter="${VISIBILITY_FILTERS.SHOW_DONE}">Done</button>
+    `
+    setFilterListeners();
+
+    notesList.innerHTML = '';
+    let notes = getVisibleNotes(data.notes, data.visibility);
     notes.map((note, index) => {
         let noteElem = `
             <li>
@@ -49,6 +74,16 @@ function setDeleteListeners() {
     for (let button of buttons) {
         button.addEventListener('click', () => {
             deleteNote(button.getAttribute('data-index'));
+        });
+    }
+} 
+
+function setFilterListeners() {
+    let buttons = filterContainer.querySelectorAll('button');
+
+    for (let button of buttons) {
+        button.addEventListener('click', () => {
+            store.dispatch(setVisibility(button.getAttribute('data-filter')));
         });
     }
 } 
