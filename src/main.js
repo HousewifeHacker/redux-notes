@@ -62,7 +62,7 @@ addNoteForm.addEventListener('submit', (e) => {
 
     let title = newNoteTitle.value;
     let content = newNoteContent.value;
-    store.dispatch(addNote(title, content));
+    store.dispatch(addNote({ title, content }));
 
     newNoteTitle.value = '';
     newNoteContent.value = '';
